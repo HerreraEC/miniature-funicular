@@ -165,14 +165,14 @@ initial_activities = {
         "participants": ["william@mergington.edu", "jacob@mergington.edu"]
     },
     "Manga Maniacs": {
-        "description": "Calling all otaku and curious newcomers! Dive into the epic world of Japanese manga — from action-packed shonen battles and heartfelt shojo romances to mind-bending seinen thrillers. Discover iconic series, debate plot twists, and find your next obsession. No experience needed — just a love for great stories!",
-        "schedule": "Tuesdays, 7:00 PM",
+        "description": "Explore the fantastic stories of the most interesting characters from Japanese Manga (graphic novels). From epic shonen adventures and heartwarming shojo tales to thrilling action and mysterious fantasy — dive into a world where every page is an adventure waiting to unfold!",
+        "schedule": "Tuesdays, 5:00 PM",
         "schedule_details": {
             "days": ["Tuesday"],
-            "start_time": "19:00",
-            "end_time": "20:00"
+            "start_time": "17:00",
+            "end_time": "18:00"
         },
-        "max_participants": 15,
+        "max_participants": 25,
         "participants": []
     }
 }
