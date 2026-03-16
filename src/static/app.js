@@ -499,6 +499,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
 
+    // Build share URLs for social platforms
+    const shareText = `Check out "${name}" at Mergington High School! ${details.description} Meets: ${formattedSchedule}`;
+    const shareUrl = window.location.href;
+    const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+
     // Create activity tag
     const tagHtml = `
       <span class="activity-tag" style="background-color: ${typeInfo.color}; color: ${typeInfo.textColor}">
@@ -569,6 +575,14 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-section">
+        <button class="share-button" title="Share this activity" aria-label="Share this activity">🔗 Share</button>
+        <div class="share-popover hidden">
+          <a href="${twitterShareUrl}" target="_blank" rel="noopener noreferrer" class="share-link" aria-label="Share on X (formerly Twitter)">𝕏 Share on X</a>
+          <a href="${facebookShareUrl}" target="_blank" rel="noopener noreferrer" class="share-link" aria-label="Share on Facebook">📘 Share on Facebook</a>
+          <button class="share-link copy-link-button" aria-label="Copy activity link to clipboard">📋 Copy Link</button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +600,46 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Share button: use native Web Share API on mobile, or show popover on desktop
+    const shareButton = activityCard.querySelector(".share-button");
+    const sharePopover = activityCard.querySelector(".share-popover");
+    const copyLinkButton = activityCard.querySelector(".copy-link-button");
+
+    shareButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (navigator.share) {
+        navigator.share({
+          title: `${name} - Mergington High School`,
+          text: shareText,
+          url: shareUrl,
+        }).catch(() => {});
+      } else {
+        // Close any other open popovers before toggling this one
+        document.querySelectorAll(".share-popover").forEach((p) => {
+          if (p !== sharePopover) p.classList.add("hidden");
+        });
+        sharePopover.classList.toggle("hidden");
+      }
+    });
+
+    // Prevent clicks inside the popover from closing it
+    sharePopover.addEventListener("click", (e) => e.stopPropagation());
+
+    // Copy the page link to clipboard
+    copyLinkButton.addEventListener("click", () => {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        copyLinkButton.textContent = "✓ Copied!";
+        setTimeout(() => {
+          copyLinkButton.textContent = "📋 Copy Link";
+        }, 2000);
+      }).catch(() => {
+        copyLinkButton.textContent = "Copy failed";
+        setTimeout(() => {
+          copyLinkButton.textContent = "📋 Copy Link";
+        }, 2000);
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -860,6 +914,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setDayFilter,
     setTimeRangeFilter,
   };
+
+  // Close all share popovers when clicking anywhere outside them
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".share-popover:not(.hidden)").forEach((p) => {
+      p.classList.add("hidden");
+    });
+  });
 
   // Initialize app
   checkAuthentication();
